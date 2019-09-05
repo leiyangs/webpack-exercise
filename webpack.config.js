@@ -1,6 +1,8 @@
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin") // 自动生成index.html
 const { CleanWebpackPlugin } = require("clean-webpack-plugin") // 每次打包清空文件夹
+const MiniCssExtractPlugin = require("mini-css-extract-plugin") // css分离
+
 module.exports = {
   context: process.cwd(),
   mode: "development", // 开发环境和生产环境配置有很多不同，webpack4以后可以配置mode development/production 用于提供模式配置选项告诉webpack相应地使用其内置的优化
@@ -25,11 +27,12 @@ module.exports = {
     rules: [
       {
         test: /\.css/,
-        use: ["style-loader", "css-loader"] // loader三种写法: use/loader/use+loader; 从右到左处理css文件
+        // use: ["style-loader", "css-loader"] // loader三种写法: use/loader/use+loader; 从右到左处理css文件
+        use: [{loader: MiniCssExtractPlugin.loader}, "css-loader"] // css分离
       },
       {
         test: /\.(jpg|jpeg|png|gif|svg)$/,
-        // use: ["file-loader"] // url-loader 比file-loader 功能强
+        // use: ["file-loader"] // url-loader比file-loader 功能强(url-loader内置了file-loader)
         use: {
           loader: "url-loader",
           options: {
@@ -47,6 +50,10 @@ module.exports = {
       chunks: ["login", "index"], // 对应入口文件 如果配置了chunksSorteMode,就可以根据代码逻辑进行排序，引入的先后顺序
       chunksSortMode:'manual' // 对引入代码块进行排序的模式chunksSortMode: 默认auto  manual手动  dependency依赖项 Funtion
     }),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: "[name].css", // 代码块名字
+      chunkFilename: "[id].css" // 异步加载用
+    })
   ]
 }
