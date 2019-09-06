@@ -2,10 +2,12 @@ const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin") // 自动生成index.html
 const { CleanWebpackPlugin } = require("clean-webpack-plugin") // 每次打包清空文件夹
 const MiniCssExtractPlugin = require("mini-css-extract-plugin") // css分离
+const TerserWebpackPlugin = require("terser-webpack-plugin") // 压缩js(在optimization中配置)
+const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin") // 压缩css
 
 module.exports = {
   context: process.cwd(),
-  mode: "development", // 开发环境和生产环境配置有很多不同，webpack4以后可以配置mode development/production 用于提供模式配置选项告诉webpack相应地使用其内置的优化
+  mode: "production", // 开发环境和生产环境配置有很多不同，webpack4以后可以配置mode development/production 用于提供模式配置选项告诉webpack相应地使用其内置的优化
   devtool: "eval", // eval会有sourcemap
   // entry: "./src/index.js", // 入口文件 如果是一个文件就是单入口 多入口要变成对象 输出文件filename不能写单个
   entry: {
@@ -55,5 +57,17 @@ module.exports = {
       filename: "[name].css", // 代码块名字
       chunkFilename: "[id].css" // 异步加载用
     })
-  ]
+  ],
+  optimization: { // 放优化的内容(这里的压缩mode必须是production才会生效)
+    minimizer: [ // 放优化的插件
+      new TerserWebpackPlugin({ // 压缩js
+        parallel: true, // 开启多进程压缩
+        cache: true // 开启缓存(压缩过的不压缩)
+      }),
+      new OptimizeCssAssetsWebpackPlugin({ // 压缩css
+        assetNameRegExp: /\.css$/g,
+        // cssProcessor: require("cssnao")
+      })
+    ]
+  },
 }
