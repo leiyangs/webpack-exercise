@@ -17,7 +17,7 @@ module.exports = {
   output: { // 输出文件
     path: path.resolve(__dirname, "dist"), // 输出目录只能是绝对目录
     filename: "[name].[hash].js", // 输出文件名(bundle.js,如果是单入口，输出的文件名就是main)   防止缓存有三种hash: hash chunkHash contentHash   [hash:8](只要八位)
-    publicPath: "/" // 根路径
+    publicPath: "/" // 根路径,指定的是构建后在html里的路径(即在浏览器中的访问路径)
   },
   devServer: { // 安装webpack-dev-server –D (其实是express开发服务器) package.json可以配置--open 运行时自动打开页面
     contentBase: path.resolve(__dirname, "dist"), // 配置开发服务器运行时的根路径(产出文件的根目录)
@@ -38,7 +38,7 @@ module.exports = {
         use: {
           loader: "url-loader",
           options: {
-            limit: 10 * 1024 // 如果图片大小小于10k，就转为base64编码
+            limit: 10 * 1024, // 如果图片大小小于10k，就转为base64编码
           }
         }
       }
